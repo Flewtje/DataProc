@@ -29,8 +29,10 @@ def extract_tvseries(dom):
     # ADD YOUR CODE HERE TO EXTRACT THE ABOVE INFORMATION ABOUT THE
     # HIGHEST RATED TV-SERIES
     # NOTE: FOR THIS EXERCISE YOU ARE ALLOWED (BUT NOT REQUIRED) TO IGNORE
-    # UNICODE CHARACTERS AND SIMPLY LEAVE THEM OUT OF THE OUTPUT.
+    # UNICODE CHARACTERS AND SIMPLY LEAVE THEM OUT OF THE OUTPUT
 
+    for i in dom('h3.lister-item-header'):
+        i('a')[0].content
 
 
     return []  # replace this line as well as appropriate
