@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # Name: Sebastiaan Arendsen
 # Student number: 6060072
 '''
@@ -31,17 +32,26 @@ def extract_tvseries(dom):
     # NOTE: FOR THIS EXERCISE YOU ARE ALLOWED (BUT NOT REQUIRED) TO IGNORE
     # UNICODE CHARACTERS AND SIMPLY LEAVE THEM OUT OF THE OUTPUT
 
+    # create an empty list
     rv = []
+
+    # div: lister-item mode-advanced is tje entry for a series
     for el in dom('div.lister-item.mode-advanced'):
+        
+        # create an empty dictionary to store data
         data = {}
-        data['title'] = unicode(el('h3 > a')[0].content)
-        data['rating'] = unicode(el('div strong')[0].content)
-        data['genre'] = unicode(el('span.genre')[0].content.rstrip())
+
+        #  title and rating are relatively clean
+        data['title'] = el('h3 > a')[0].content.encode('utf8')
+        data['rating'] = el('div strong')[0].content.encode('utf8')
+        
+        # genre had some 
+        data['genre'] = el('span.genre')[0].content.strip().encode('utf8')
         actors = []
         for actor in el('p a'):
-            actors.append(actor.content)
-        data['actors'] = unicode(', '.join(actors))
-        data['runtime'] = unicode(el('span.runtime')[0].content)
+            actors.append(actor.content.encode('utf8'))
+        data['actors'] = ', '.join(actors)
+        data['runtime'] = el('span.runtime')[0].content.rstrip('min').encode('utf8')
         rv.append(data)
 
     return rv
@@ -54,8 +64,8 @@ def save_csv(f, tvseries):
     writer = csv.writer(f)
     writer.writerow(['Title', 'Rating', 'Genre', 'Actors', 'Runtime'])
     for serie in tvseries:
-        writer.writerow([serie['title'], serie['rating'], serie['genre'], serie['actors'], serie['runtime']])
-    # ADD SOME CODE OF YOURSELF HERE TO WRITE THE TV-SERIES TO DISK
+        writer.writerow([serie['title'], serie['rating'], serie['genre'], \
+            serie['actors'], serie['runtime']])
 
 if __name__ == '__main__':
     # Download the HTML file
