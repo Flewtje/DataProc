@@ -33,13 +33,14 @@ def extract_tvseries(dom):
 
     data = {}
     #print dom('div.lister-item')
-    for i, el in enumerate(dom('div.lister-item')):
-        data['title'] = el('h3 > a')
-        data['rating'] = el('div > strong').content
-        data['genre'] = 0
-        data['actors'] = 0
-        data['runtime'] = 0
+    for i, el in enumerate(dom('div.lister-item.mode-advanced')):
+        data['title'] = el('h3 > a')[0].content
+        data['rating'] = el('div strong')[0].content
+        data['genre'] = el('span.genre')[0].content
+        data['actors'] = 0 #el('p -> a')[0].content
+        data['runtime'] = el('span.runtime')[0].content
         print data
+        print i
 
     return []  # replace this line as well as appropriate
 
