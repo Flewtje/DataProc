@@ -31,18 +31,20 @@ def extract_tvseries(dom):
     # NOTE: FOR THIS EXERCISE YOU ARE ALLOWED (BUT NOT REQUIRED) TO IGNORE
     # UNICODE CHARACTERS AND SIMPLY LEAVE THEM OUT OF THE OUTPUT
 
-    data = {}
-    #print dom('div.lister-item')
-    for i, el in enumerate(dom('div.lister-item.mode-advanced')):
-        data['title'] = el('h3 > a')[0].content
-        data['rating'] = el('div strong')[0].content
-        data['genre'] = el('span.genre')[0].content
-        data['actors'] = 0 #el('p -> a')[0].content
-        data['runtime'] = el('span.runtime')[0].content
-        print data
-        print i
+    rv = []
+    for el in dom('div.lister-item.mode-advanced'):
+        data = {}
+        data['title'] = unicode(el('h3 > a')[0].content)
+        data['rating'] = unicode(el('div strong')[0].content)
+        data['genre'] = unicode(el('span.genre')[0].content.rstrip())
+        actors = []
+        for actor in el('p a'):
+            actors.append(actor.content)
+        data['actors'] = unicode(', '.join(actors))
+        data['runtime'] = unicode(el('span.runtime')[0].content)
+        rv.append(data)
 
-    return []  # replace this line as well as appropriate
+    return rv
 
 
 def save_csv(f, tvseries):
@@ -51,6 +53,8 @@ def save_csv(f, tvseries):
     '''
     writer = csv.writer(f)
     writer.writerow(['Title', 'Rating', 'Genre', 'Actors', 'Runtime'])
+    for serie in tvseries:
+        writer.writerow([serie['title'], serie['rating'], serie['genre'], serie['actors'], serie['runtime']])
     # ADD SOME CODE OF YOURSELF HERE TO WRITE THE TV-SERIES TO DISK
 
 if __name__ == '__main__':
