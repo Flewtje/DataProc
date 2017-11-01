@@ -18,10 +18,16 @@ def page_parser(data):
     URL = ''.join((BASE_URL, data['link']))
     html = urllib.request.urlopen(URL).read()
     soup = BeautifulSoup(html, 'html.parser')
-    data['runtime'] = soup.find('div', 'subtext').time.string.strip()
-    data['genre'] = soup.find('span', 'itemprop').string.strip()
-    data['director'] = soup.find('div', 'summary_text').string.strip()
-
+    
+    sub_text = soup.find('div', 'subtext')
+    data['runtime'] = sub_text.time.string.strip()
+    #for genre in sub_text.find_all('span')
+    data['genre'] = []
+    for el in sub_text.find_all('span', 'itemprop'):
+        data['genre'].append(el.string.strip())
+    data['genre'] = ';'.join(data['genre'])
+    #plot_summary = soup.find('div', 'plot_summary')
+    #data['director'] = plot_summary.find('director').find('span', 'itemprop').string.strip()
     return data
 
 if __name__ == '__main__':
