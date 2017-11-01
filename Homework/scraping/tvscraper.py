@@ -45,12 +45,15 @@ def extract_tvseries(dom):
         data['title'] = el('h3 > a')[0].content.encode('utf8')
         data['rating'] = el('div strong')[0].content.encode('utf8')
         
-        # genre had some 
+        # genre had some trailing and leading whitespace
         data['genre'] = el('span.genre')[0].content.strip().encode('utf8')
-        actors = []
-        for actor in el('p a'):
-            actors.append(actor.content.encode('utf8'))
-        data['actors'] = ', '.join(actors)
+
+        # actors are multiple 
+        #actors = []
+        #for actor in el('p a'):
+        #    actors.append(actor.content.encode('utf8'))
+
+        data['actors'] = ', '.join(el('p a').content)
         data['runtime'] = el('span.runtime')[0].content.rstrip('min').encode('utf8')
         rv.append(data)
 
