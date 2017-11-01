@@ -20,7 +20,7 @@ def page_parser(data):
     soup = BeautifulSoup(html, 'html.parser')
     data['runtime'] = soup.find('div', 'subtext').time.string.strip()
     data['genre'] = soup.find('span', 'itemprop').string.strip()
-    data['director'] = soup.find('span', 'itemprop', 'name').string.strip()
+    data['director'] = soup.find('div', 'summary_text').string.strip()
 
     return data
 
