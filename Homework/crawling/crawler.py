@@ -3,6 +3,7 @@
 # 
 
 from bs4 import BeautifulSoup
+import re
 import urllib.request
 import csv
 import os
@@ -33,12 +34,28 @@ def page_parser(data):
         data['genre'].append(el.string.strip())
     data['genre'] = ';'.join(data['genre'])
 
-    # not working yet
+    # find writers
     data['writer'] = []
     for el in soup('span', attrs={'itemprop': 'creator', 'itemtype': 'http://schema.org/Person'}):
         data['writer'].append(el.find('a').string.strip())
+    data['writer'] = ';'.join(data['writer'])
 
     data['director'] = []
+    for el in soup('span', attrs={'itemprop': 'director'}):
+        data['director'].append(el.find('a').string.strip())
+    data['director'] = ';'.join(data['director'])
+
+    data['actor'] = []
+    for el in soup('span', attrs={'itemprop': 'actors'}):
+        data['actor'].append(el.find('span').string.strip())
+    data['actor'] = ';'.join(data['actor'])
+
+    rating_string = soup.find('div', class_='ratingValue').find('strong')['title']
+    data['rating'] = rating_string[:3]
+
+    # regular expression used to remove all non digits from place 3 onwards
+    data['voters'] = re.sub('[^0-9]', '', rating_string[3:])
+
 
     return data
 
