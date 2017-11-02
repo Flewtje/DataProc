@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 import re
 import urllib.request
 import csv
-import os
 
 # constants
 TARGET_URL = 'http://www.imdb.com/chart/top'
@@ -23,6 +22,11 @@ def retrieve_html(url):
     while not html:
         try:
             html = urllib.request.urlopen(url, timeout=10).read()
+
+        # prevent the try from keeping the user from closing the program
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        
         except:
             print('Download failed, will retry.')
 

@@ -1,6 +1,13 @@
 Title,Runtime,Genre(s),Director(s),Writer(s),Actor(s),Rating,Number of ratings
-The Shawshank Redemption,142,Crime;Drama,Frank Darabont,Stephen King;Frank Darabont,Tim Robbins;Morgan Freeman;Bob Gunton,9.3,1871488
-The Godfather,175,Crime;Drama,Francis Ford Coppola,Mario Puzo;Francis Ford Coppola,Marlon Brando;Al Pacino;James Caan,9.2,1277703
-The Godfather: Part II,202,Crime;Drama,Francis Ford Coppola,Francis Ford Coppola;Mario Puzo,Al Pacino;Robert De Niro;Robert Duvall,9.0,881005
-The Dark Knight,152,Action;Crime;Drama,Christopher Nolan,Jonathan Nolan;Christopher Nolan,Christian Bale;Heath Ledger;Aaron Eckhart,9.0,1848242
-12 Angry Men,96,Crime;Drama,Sidney Lumet,Reginald Rose;Reginald Rose,Henry Fonda;Lee J. Cobb;Martin Balsam,8.9,512180
+The Shawshank Redemption,142,Crime;Drama,Frank Darabont,Stephen King;Frank Darabont,Tim Robbins;Morgan Freeman;Bob Gunton,9.3,1871757
+The Godfather,175,Crime;Drama,Francis Ford Coppola,Mario Puzo;Francis Ford Coppola,Marlon Brando;Al Pacino;James Caan,9.2,1277863
+The Godfather: Part II,202,Crime;Drama,Francis Ford Coppola,Francis Ford Coppola;Mario Puzo,Al Pacino;Robert De Niro;Robert Duvall,9.0,881117
+The Dark Knight,152,Action;Crime;Drama,Christopher Nolan,Jonathan Nolan;Christopher Nolan,Christian Bale;Heath Ledger;Aaron Eckhart,9.0,1848481
+12 Angry Men,96,Crime;Drama,Sidney Lumet,Reginald Rose;Reginald Rose,Henry Fonda;Lee J. Cobb;Martin Balsam,8.9,512267
+Schindler's List,195,Biography;Drama;History,Steven Spielberg,Thomas Keneally;Steven Zaillian,Liam Neeson;Ralph Fiennes;Ben Kingsley,8.9,961788
+Pulp Fiction,154,Crime;Drama,Quentin Tarantino,Quentin Tarantino;Roger Avary,John Travolta;Uma Thurman;Samuel L. Jackson,8.9,1464565
+The Lord of the Rings: The Return of the King,201,Adventure;Drama;Fantasy,Peter Jackson,J.R.R. Tolkien;Fran Walsh,Elijah Wood;Viggo Mortensen;Ian McKellen,8.9,1338502
+"Il buono, il brutto, il cattivo",161,Western,Sergio Leone,Luciano Vincenzoni;Sergio Leone,Clint Eastwood;Eli Wallach;Lee Van Cleef,8.9,554765
+Fight Club,139,Drama,David Fincher,Chuck Palahniuk;Jim Uhls,Brad Pitt;Edward Norton;Meat Loaf,8.8,1500296
+The Lord of the Rings: The Fellowship of the Ring,178,Adventure;Drama;Fantasy,Peter Jackson,J.R.R. Tolkien;Fran Walsh,Elijah Wood;Ian McKellen;Orlando Bloom,8.8,1358829
+Forrest Gump,142,Drama;Romance,Robert Zemeckis,Winston Groom;Eric Roth,Tom Hanks;Robin Wright;Gary Sinise,8.8,1411336

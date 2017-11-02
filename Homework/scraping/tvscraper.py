@@ -46,9 +46,6 @@ def extract_tvseries(dom):
         
         # genre had some trailing and leading whitespace
         data['genre'] = el('span.genre')[0].content.strip().encode('utf8')
-        # data['genre'] = []
-        # for genre in el('span')
-
 
         # actors 
         data['actors'] = []
