@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Name: Sebastiaan Arendsen
 # Student number: 6060072
 '''
@@ -47,13 +46,15 @@ def extract_tvseries(dom):
         
         # genre had some trailing and leading whitespace
         data['genre'] = el('span.genre')[0].content.strip().encode('utf8')
+        # data['genre'] = []
+        # for genre in el('span')
 
-        # actors are multiple 
-        #actors = []
-        #for actor in el('p a'):
-        #    actors.append(actor.content.encode('utf8'))
 
-        data['actors'] = ', '.join(el('p a').content)
+        # actors 
+        data['actors'] = []
+        for actor in el('p a'):
+            data['actors'].append(actor.content.encode('utf8'))
+        data['actors'] = ';'.join(data['actors'])
         data['runtime'] = el('span.runtime')[0].content.rstrip('min').encode('utf8')
         rv.append(data)
 
@@ -71,7 +72,7 @@ def save_csv(f, tvseries):
             serie['actors'], serie['runtime']])
 
 if __name__ == '__main__':
-    # Download the HTML file
+    # download the HTML file
     url = URL(TARGET_URL)
     html = url.download()
 
@@ -80,13 +81,12 @@ if __name__ == '__main__':
     with open(BACKUP_HTML, 'wb') as f:
         f.write(html)
 
-    # Parse the HTML file into a DOM representation
+    # parse the HTML file into a DOM representation
     dom = DOM(html)
 
-    # Extract the tv series (using the function you implemented)
+    # extract the tv series (using the function you implemented)
     tvseries = extract_tvseries(dom)
-    print tvseries
 
-    # Write the CSV file to disk (including a header)
+    # write the CSV file to disk (including a header)
     with open(OUTPUT_CSV, 'wb') as output_file:
         save_csv(output_file, tvseries)
