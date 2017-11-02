@@ -1,8 +1,9 @@
+# crawler.py
 # python3.6
-# Sebastiaan Arendsen
-# 
+# Sebastiaan Arendsen - 6060072
+#
+# Uses python3.6 and beautifulsoup4 (bs4) to crawl the imdb top250 page.
 
-# using bs4 instead of patterns as it allows python3
 from bs4 import BeautifulSoup
 import re
 import urllib.request
@@ -23,10 +24,10 @@ def retrieve_html(url):
         try:
             html = urllib.request.urlopen(url, timeout=10).read()
 
-        # prevent the try from keeping the user from closing the program
+        # prevent try from keeping the user from closing by raising the error
         except (KeyboardInterrupt, SystemExit):
             raise
-        
+
         except:
             print('Download failed, will retry.')
 
@@ -36,11 +37,11 @@ def page_parser(data):
 
     # use standard python html parser and bs4
     soup = BeautifulSoup(retrieve_html(BASE_URL + data['link']), 'html.parser')
-    
+
     # find data from movie page modify it and store it in a dictionary
     data['runtime'] = soup.find('time', attrs={'itemprop': 'duration'})\
-    ['datetime'][2:-1]    
-    
+    ['datetime'][2:-1]
+
     # get the genres
     data['genre'] = []
     for el in soup.find('div', 'subtext').find_all('span', 'itemprop'):
@@ -85,24 +86,24 @@ if __name__ == '__main__':
 
     # get soup for imdb top 250 page
     soup = BeautifulSoup(retrieve_html(TARGET_URL), 'html.parser')
-    
+
     # write first line in csv file
     with open(OUTPUT_CSV, 'w') as output_file:
         writer = csv.writer(output_file)
         writer.writerow(['Title', 'Runtime', 'Genre(s)', 'Director(s)', 'Writer(s)', 'Actor(s)', 'Rating', 'Number of ratings'])
-    
+
     # iterate over all movies in the top 250
     for i, movie in enumerate(soup('td', 'titleColumn')):
         data = {}
         data['title'] = movie.a.string
-        
+
         # link is stored and individual page is parsed
         data['link'] = movie.a.get('href')
         data = page_parser(data)
-        
+
         # give an indication of the progress, as it might take a long time
         print('Current entry: {} {}'.format(i + 1, data['title']))
-        
+
         # write the data to the csv file
         with open(OUTPUT_CSV, 'a') as output_file:
             writer = csv.writer(output_file)
