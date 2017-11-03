@@ -1,0 +1,36 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[dutch]{babel}
+\usepackage{braket}
+\usepackage{a4wide}
+\usepackage{listings}
+
+
+\title{Answers week 2}
+\author{Sebastiaan Arendsen}
+
+\newcommand{\I}{\mathtt{i}}
+\newcommand{\E}{\mathrm{e}}
+\newcommand{\integral}[4]{\int_{#1}^{#2}\!#3\,\mathrm{d}#4}
+\newcommand{\ointegral}[4]{\oint_{#1}^{#2}\!#3\,\mathrm{d}#4}
+
+
+\begin{document}
+\maketitle
+
+\section{Explain the difference between == and ===}
+In javascript == will check if the two values are equal. The === operator will also check if it has the same type. Example:
+
+\begin{lstlisting}
+0 == 0: True
+0 == False: True
+0 === 0: True
+0 === False: False
+\end{lstlisting}
+
+\section{Explain what a closure is}
+
+
+\end{document}
