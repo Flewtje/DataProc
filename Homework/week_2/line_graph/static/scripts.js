@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', function(){     
     
+    // get the canvas element 
     var canvas = document.getElementById('graph');
     var ctx = canvas.getContext('2d');
 
