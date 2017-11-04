@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1509704904 "/home/sebba/DataProc/Homework/week_2/answers.tex" "/home/sebba/DataProc/Homework/week_2/answers.pdf" "answers" 1509704905
+["pdflatex"] 1509725001 "/home/sebba/DataProc/Homework/week_2/answers.tex" "/home/sebba/DataProc/Homework/week_2/answers.pdf" "answers" 1509725002
   "/etc/texmf/web2c/texmf.cnf" 1509019390 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/sebba/DataProc/Homework/week_2/answers.aux" 1509704905 317 ae60257b1502968489cbe609b8964af0 ""
-  "/home/sebba/DataProc/Homework/week_2/answers.tex" 1509704903 740 7e8d02b8586cb63aa4c5cbbdf9b4acd1 ""
+  "/home/sebba/DataProc/Homework/week_2/answers.aux" 1509725002 505 685b3256cb11027ae02a048bc286b9df ""
+  "/home/sebba/DataProc/Homework/week_2/answers.tex" 1509725000 831 871f189626c377c0322a8f0f3d7c3419 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1480098670 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1480098698 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -50,12 +50,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1503024366 32036 8f10cb8f6ef259fb5791f09c065d3d13 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1509047499 2377213 8bc19c9e6d8db8e1c35694d1be199981 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1509047535 4130829 db7617c56f91ef17c80f1ead97f9ee9f ""
-  "answers.aux" 1509704905 317 ae60257b1502968489cbe609b8964af0 ""
-  "answers.tex" 1509704903 740 7e8d02b8586cb63aa4c5cbbdf9b4acd1 ""
+  "answers.aux" 1509725002 505 685b3256cb11027ae02a048bc286b9df ""
+  "answers.tex" 1509725000 831 871f189626c377c0322a8f0f3d7c3419 ""
   (generated)
-  "answers.aux"
   "answers.pdf"
-  "answers.toc"
-  "/home/sebba/DataProc/Homework/week_2/answers.pdf"
+  "answers.aux"
   "answers.log"
+  "/home/sebba/DataProc/Homework/week_2/answers.pdf"
+  "answers.toc"
   "/home/sebba/DataProc/Homework/week_2/answers.log"
