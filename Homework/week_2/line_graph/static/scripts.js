@@ -8,6 +8,7 @@ const width = 730;
 const height = 500;
 const axes = 50;
 
+
 document.addEventListener('DOMContentLoaded', function() {     
     
     // find the canvas in the html file
@@ -18,10 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const url = '/static/data/data.json';
     var dataRequest = new XMLHttpRequest();
     
+    var data;
     // create a load listener
     dataRequest.addEventListener('load', function() {
         if (this.readyState == 4 && (this.status == 200 || this.status == 304)) {
-            console.log(this.response);
+            console.log(this.response.parse());
+            data = this.response.parse;
         }
     });
 
@@ -40,31 +43,36 @@ document.addEventListener('DOMContentLoaded', function() {
     ctx.lineTo(width, height - axes);
     ctx.stroke();
 
-    var transform = createTransform([0, 365], [-100, 300]);
-
+    var transformY = 0;
+    var transformX = 0;
 });
 
-// function 
+// function to tansform coordinates
+function createTransform(input, output) {
+    x = axes + (xScale * xIn);
+    y = height - (yScale * yIn);
 
-function createTransform(domain, range) {
-	// domain is a two-element array of the data bounds [domainMin, domainMax]
-	// range is a two-element array of the screen bounds [rangeMin, rangeMax]
-	// this gives you two equations to solve:
-	// rangeMin = alpha * domainMin + beta
-	// rangeMax = alpha * domainMax + beta
-	// a solution would be:
+}
 
-    var domainMin = domain[0];
-    var domainMax = domain[1];
-    var rangeMin = range[0];
-    var rangeMax = range[1];
+// function createTransform(domain, range) {
+// 	// domain is a two-element array of the data bounds [domainMin, domainMax]
+// 	// range is a two-element array of the screen bounds [rangeMin, rangeMax]
+// 	// this gives you two equations to solve:
+// 	// rangeMin = alpha * domainMin + beta
+// 	// rangeMax = alpha * domainMax + beta
+// 	// a solution would be:
 
-    // formulas to calculate the alpha and the beta
-   	var alpha = (rangeMax - rangeMin) / (domainMax - domainMin);
-    var beta = rangeMax - alpha * domainMax;
+//     var domainMin = domain[0];
+//     var domainMax = domain[1];
+//     var rangeMin = range[0];
+//     var rangeMax = range[1];
 
-    // returns the function for the linear transformation (y= a * x + b)
-    return function(x) {
-        return alpha * x + beta;
-    };
-};
+//     // formulas to calculate the alpha and the beta
+//    	var alpha = (rangeMax - rangeMin) / (domainMax - domainMin);
+//     var beta = rangeMax - alpha * domainMax;
+
+//     // returns the function for the linear transformation (y= a * x + b)
+//     return function(x) {
+//         return alpha * x + beta;
+//     };
+// };
