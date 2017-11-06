@@ -1,23 +1,50 @@
-// scripts.js
-// Sebastiaan Arendsen
-// 6060072
+/* scripts.js
+ * Author: Sebastiaan Arendsen
+ * Draws a graph based on KNMI data
+*/ 
+
+// set size of plot
+const width = 730;
+const height = 500;
+const axes = 50;
 
 document.addEventListener('DOMContentLoaded', function() {     
     
     // find the canvas in the html file
     var canvas = document.getElementById('graph');
     var ctx = canvas.getContext('2d');
+    
+    // initialize data request
+    const url = '/static/data/data.json';
+    var dataRequest = new XMLHttpRequest();
+    
+    // create a load listener
+    dataRequest.addEventListener('load', function() {
+        if (this.readyState == 4 && (this.status == 200 || this.status == 304)) {
+            console.log(this.response);
+        }
+    });
 
-    // initialize 
+    // actually get the data
+    dataRequest.open('get', url, true);
+    dataRequest.send();
+
+    // define size of canvas
+    canvas.height = height + axes;
+    canvas.width = width + axes;
+
+    // initialize axes 
     ctx.beginPath();
-    ctx.moveTo(40, 0);
-    ctx.lineTo(40, 500);
-    ctx.lineTo(840, 500);
+    ctx.moveTo(axes, 0);
+    ctx.lineTo(axes, height - axes);
+    ctx.lineTo(width, height - axes);
     ctx.stroke();
 
-    // var transform = createTransform([0, 369], [-100, 300]);
+    var transform = createTransform([0, 365], [-100, 300]);
 
 });
+
+// function 
 
 function createTransform(domain, range) {
 	// domain is a two-element array of the data bounds [domainMin, domainMax]
