@@ -1,6 +1,6 @@
 // http://www.csvjson.com/csv2json
 // average temperature in De Bilt (NL) during the year 1991
-var data = [
+[
   {
     "date": 19910101,
     "temp": 48
