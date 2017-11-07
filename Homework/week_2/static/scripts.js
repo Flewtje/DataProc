@@ -1,15 +1,19 @@
-/* scripts.js
+/* 
+ * scripts.js
  * Author: Sebastiaan Arendsen
  * Draws a graph based on KNMI data
 */ 
 
-// set size of plot
+// set size of plot and other constants
 const width = 730;
 const height = 500;
 const axes = 150;
-const url = '/static/data/data.json';
+const url = '/static/data/KNMI_19911231.txt';
 
 
+/*
+ * Main function which is executed when the page has been loaded 
+ */
 document.addEventListener('DOMContentLoaded', function() {
     
     // find the canvas in the html file
@@ -26,18 +30,17 @@ document.addEventListener('DOMContentLoaded', function() {
             this.status == 304)) {
 
             // store data as an array of objects
-            var data = JSON.parse(this.responseText);
+            var data = csvJSON(this.responseText);
             var transform = createTransform(data);
             
-            // move to (0, 0) as this gives the least amount of "glitchy"
-            // behaviour
+            // start writing data points
             ctx.beginPath();
-            ctx.moveTo(axes, axes);
             for (var i = 0; i < data.length; i++) {
 
                 // transform data point and draw a line to that point
                 var plotPoint = transform([i, data[i].temp]);
-                ctx.lineTo(plotPoint[0], plotPoint[1]);
+                if (i == 0) ctx.moveTo(plotPoint[0], plotPoint[1]);
+                else ctx.lineTo(plotPoint[0], plotPoint[1]);
             }
 
             // draw a dashed line at y = 0 
@@ -97,6 +100,8 @@ function writeAxes(context, data) {
 
 // function to tansform coordinates
 function createTransform(data) {
+
+    // determine x-scaling
     var xScale = width / data.length;
     
     var min = 0;
@@ -110,13 +115,46 @@ function createTransform(data) {
         }
     }
 
+    // get lowest y value and base scaling of y on it
     var yMin = Math.abs(Math.floor(min));
     var yScale = height / (yMin + Math.ceil(max));
 
     return function(date) {
         var x = axes + (xScale * date[0]);
         var y = axes + (yMin + date[1]) * yScale;
-        var newDate = [x, y];
-        return newDate;
+        return [x, y];
     }
+}
+
+/* https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
+ * Using ths function we can use the raw data from KNMI.
+ */
+function csvJSON(csv){
+
+    // split the file at every new line and store it in array "lines"
+    var lines = csv.split('\n');
+    var result = [];
+
+    // headers can be fixed
+    var headers = ['station', 'date', 'temp'];
+
+    // "12" because this is where the actual data begins
+    // cleaner would be to use a line skip on comments, but this is 
+    // unnecassary for this particular case
+    for (var i = 12; i < lines.length; i++) {
+
+        var obj = {};
+
+        // split each line at the commas
+        var currentline = lines[i].split(',');
+
+            for (var j = 0; j < headers.length; j++) {
+
+                // parse as int
+                obj[headers[j]] = parseInt(currentline[j]);
+            }
+
+        result.push(obj);
+    }
+    return result; //JavaScript object
 }
