@@ -9,22 +9,37 @@ const height = 500;
 const axes = 50;
 
 
-document.addEventListener('DOMContentLoaded', function() {     
+document.addEventListener('DOMContentLoaded', function() {
     
     // find the canvas in the html file
     var canvas = document.getElementById('graph');
     var ctx = canvas.getContext('2d');
-    
+
     // initialize data request
     const url = '/static/data/data.json';
     var dataRequest = new XMLHttpRequest();
-    
     var data;
+    
     // create a load listener
     dataRequest.addEventListener('load', function() {
-        if (this.readyState == 4 && (this.status == 200 || this.status == 304)) {
-            console.log(this.response.parse());
-            data = this.response.parse;
+        if (this.readyState == 4 && (this.status == 200 || 
+            this.status == 304)) {
+
+            // store data as an array of objects
+            var data = JSON.parse(this.responseText);
+            var transform = createTransform(data);
+            ctx.moveTo(axes, axes);
+            for (var i = 0; i < data.length; i++) {
+                var temp = data[i].temp;
+                var date = i;
+                var plotPoint = transform([date, temp]);
+                ctx.lineTo(plotPoint[0], plotPoint[1]);
+            }
+            ctx.stroke();
+        }
+
+        else {
+            throw 'Failed to load data.';
         }
     });
 
@@ -36,43 +51,46 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.height = height + axes;
     canvas.width = width + axes;
 
+    // flip the y-axis and move the canvas
+    ctx.transform(1, 0, 0, -1, 0, canvas.height);
+
     // initialize axes 
     ctx.beginPath();
-    ctx.moveTo(axes, 0);
-    ctx.lineTo(axes, height - axes);
-    ctx.lineTo(width, height - axes);
+    ctx.moveTo(axes, axes);
+    ctx.lineTo(axes, axes + height);
+    ctx.moveTo(axes, axes);
+    ctx.lineTo(axes + width, axes);
     ctx.stroke();
 
-    var transformY = 0;
-    var transformX = 0;
 });
 
-// function to tansform coordinates
-function createTransform(input, output) {
-    x = axes + (xScale * xIn);
-    y = height - (yScale * yIn);
-
+// write the labels on the axes
+function writeAxes(context, data) {
+    return undefined;
 }
 
-// function createTransform(domain, range) {
-// 	// domain is a two-element array of the data bounds [domainMin, domainMax]
-// 	// range is a two-element array of the screen bounds [rangeMin, rangeMax]
-// 	// this gives you two equations to solve:
-// 	// rangeMin = alpha * domainMin + beta
-// 	// rangeMax = alpha * domainMax + beta
-// 	// a solution would be:
+// function to tansform coordinates
+function createTransform(data) {
+    var xScale = width / data.length;
+    
+    var min = 0;
+    var max = 0;
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].temp < min) {
+            min = data[i].temp;
+        }
+        else if (data[i].temp > max) {
+            max = data[i].temp;
+        }
+    }
 
-//     var domainMin = domain[0];
-//     var domainMax = domain[1];
-//     var rangeMin = range[0];
-//     var rangeMax = range[1];
+    var yMin = Math.abs(Math.floor(min));
+    var yScale = height / (yMin + Math.ceil(max));
 
-//     // formulas to calculate the alpha and the beta
-//    	var alpha = (rangeMax - rangeMin) / (domainMax - domainMin);
-//     var beta = rangeMax - alpha * domainMax;
-
-//     // returns the function for the linear transformation (y= a * x + b)
-//     return function(x) {
-//         return alpha * x + beta;
-//     };
-// };
+    return function(date) {
+        var x = axes + (xScale * date[0]);
+        var y = axes + (yMin + date[1]) * yScale;
+        var newDate = [x, y];
+        return newDate;
+    }
+}
