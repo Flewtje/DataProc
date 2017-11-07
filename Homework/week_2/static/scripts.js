@@ -6,7 +6,8 @@
 // set size of plot
 const width = 730;
 const height = 500;
-const axes = 50;
+const axes = 150;
+const url = '/static/data/data.json';
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var ctx = canvas.getContext('2d');
 
     // initialize data request
-    const url = '/static/data/data.json';
     var dataRequest = new XMLHttpRequest();
     var data;
     
@@ -28,13 +28,40 @@ document.addEventListener('DOMContentLoaded', function() {
             // store data as an array of objects
             var data = JSON.parse(this.responseText);
             var transform = createTransform(data);
+            
+            // move to (0, 0) as this gives the least amount of "glitchy"
+            // behaviour
+            ctx.beginPath();
             ctx.moveTo(axes, axes);
             for (var i = 0; i < data.length; i++) {
-                var temp = data[i].temp;
-                var date = i;
-                var plotPoint = transform([date, temp]);
+
+                // transform data point and draw a line to that point
+                var plotPoint = transform([i, data[i].temp]);
                 ctx.lineTo(plotPoint[0], plotPoint[1]);
             }
+
+            // draw a dashed line at y = 0 
+            var zeroPoint = transform([0, 0]);
+            ctx.moveTo(zeroPoint[0], zeroPoint[1]);
+            
+            // loop over i and j
+            var i, j;
+            for (i = 0, j = 0; i <= data.length; j++, 
+                
+                // arbitrary jump space for dashed line
+                i += (data.length / 22)) {
+                
+                // transform the place to actual coordinates
+                zeroPoint = transform([i, 0]);
+                if (j % 2 == 1) {
+                    ctx.lineTo(zeroPoint[0], zeroPoint[1]);
+                }
+                else {
+                    ctx.moveTo(zeroPoint[0], zeroPoint[1]);
+                }
+            }
+
+            // actually draw the lines
             ctx.stroke();
         }
 
@@ -56,9 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // initialize axes 
     ctx.beginPath();
-    ctx.moveTo(axes, axes);
-    ctx.lineTo(axes, axes + height);
-    ctx.moveTo(axes, axes);
+    ctx.moveTo(axes, axes + height);
+    ctx.lineTo(axes, axes);
     ctx.lineTo(axes + width, axes);
     ctx.stroke();
 
