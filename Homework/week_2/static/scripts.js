@@ -65,7 +65,6 @@ function writeGraph(canvas, data) {
     
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    console.log(height); 
     canvas.width = width + axes + 50;
     canvas.height = height + axes;
     transform = createTransform(data);
@@ -80,7 +79,6 @@ function writeGraph(canvas, data) {
         
         // transform data point and draw a line to that point
         var plotPoint = transform([i, data[i].temp]);
-        // console.log(plotPoint);
         if (i == 0) ctx.moveTo(plotPoint[0], plotPoint[1]);
         else ctx.lineTo(plotPoint[0], plotPoint[1]);
     }
