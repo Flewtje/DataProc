@@ -10,7 +10,7 @@
 var width = 1000;
 var height = 500;
 const axes = 50;
-const url = 'data/KNMI_19911231.txt';
+const url = 'KNMI_19911231.txt';
 const monthStrings = ['january', 'february', 'march', 'april', 'may', 'june', 
 'july', 'august', 'september', 'october', 'november', 'december'];
 var transform;
