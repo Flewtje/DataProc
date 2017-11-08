@@ -5,13 +5,14 @@
 */ 
 
 // set size of plot and other constants
-
-//'use strict';
-
+'use strict';
 const width = 730;
 const height = 500;
 const axes = 150;
 const url = '/static/data/KNMI_19911231.txt';
+var transform;
+const monthStrings = ['january', 'february', 'march', 'april', 'may', 'june', 
+'july', 'august', 'september', 'october', 'november', 'december'];
 
 /*
  * Main function which is executed when the page has been loaded 
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // store data as an array of objects
             var data = csvJSON(this.responseText);
-            var transform = createTransform(data);
+            transform = createTransform(data);
             
             // start writing data points
             ctx.beginPath();
@@ -70,7 +71,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // actually draw the lines
             ctx.stroke();
 
-            writeAxes(ctx, data);
+            writeYAxis(ctx, data);
+            writeXAxis(ctx, data);
         }
 
         else {
@@ -84,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // define size of canvas
     canvas.height = height + axes;
-    canvas.width = width + axes;
+    canvas.width = width + axes + 50;
 
     // flip the y-axis and move the canvas
     // ctx.transform(1, 0, 0, -1, 0, canvas.height);
@@ -98,10 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-// write the labels on the axes
-function writeAxes(ctx, data) {
+// write the labels on the y axis
+function writeYAxis(ctx, data) {
     
-    var transform = createTransform(data);
     var zeroPoint = transform([0, 0]);
     ctx.textAlign = "center"; 
     
@@ -110,13 +111,39 @@ function writeAxes(ctx, data) {
     ctx.fillText('0', zeroPoint[0] - 20, zeroPoint[1] + 3);
 
     var minMax = findMinMax(data);
-    // for (var i = 0; i < )
+    for (var i = 0; i < minMax[1]; i += 50) {
+        var axisPoint = transform([0, i]);
+        ctx.moveTo(axisPoint[0], axisPoint[1]);
+        ctx.lineTo(axisPoint[0] - 10, axisPoint[1]);
+        ctx.fillText(i / 10, axisPoint[0] - 20, axisPoint[1] + 3);
+    }
 
-    
+    for (var i = -50; i > minMax[0]; i -= 50) {
+        var axisPoint = transform([0, i]);
+        ctx.moveTo(axisPoint[0], axisPoint[1]);
+        ctx.lineTo(axisPoint[0] - 10, axisPoint[1]);
+        ctx.fillText(i / 10, axisPoint[0] - 20, axisPoint[1] + 3);
+    }    
     ctx.stroke();
 }
 
+function writeXAxis(ctx, data) {
+    ctx.moveTo(axes, height);
+    ctx.lineTo(axes, height + 10);
+    var month = 0;
 
+    for (var i = 0; i < data.length - 1; i++) {
+        if (parseInt(data[i].date.toString()[4] + data[i].date.toString()[5]) != month) {
+            var axisPoint = transform([i, 0]);
+            ctx.moveTo(axisPoint[0], height);
+            ctx.lineTo(axisPoint[0], height + 10);
+            ctx.fillText(monthStrings[month], axisPoint[0], height + 30);
+            if (month < 12) month++;
+            else month = 0;
+        }
+    }
+    ctx.stroke();
+}
 
 // function to tansform coordinates
 function createTransform(data) {
@@ -124,12 +151,14 @@ function createTransform(data) {
     // determine x-scaling
     var xScale = width / data.length;
     
+    // find minimum and maximum
     var minMax = findMinMax(data);
 
     // get lowest y value and base scaling of y on it
     var yMin = Math.abs(Math.floor(minMax[0]));
     var yScale = -(height / (yMin + Math.ceil(minMax[1])));
 
+    // create function
     return function(date) {
         var x = axes + (xScale * date[0]);
         var y = height + (yMin + date[1]) * yScale;
@@ -167,7 +196,7 @@ function csvJSON(csv){
 
         result.push(obj);
     }
-    return result; //JavaScript object
+    return result;
 }
 
 function findMinMax(data) {
@@ -176,12 +205,10 @@ function findMinMax(data) {
     for (var i = 0; i < data.length; i++) {
         if (data[i].temp < min) {
             min = data[i].temp;
-            console.log(min);
         }
         else if (data[i].temp > max) {
             max = data[i].temp;
-            console.log(max);
-        }
+        }   
     }
-    return [min, max];
+    return [min - 10, max + 10];
 }
