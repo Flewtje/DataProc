@@ -5,11 +5,13 @@
 */ 
 
 // set size of plot and other constants
+
+//'use strict';
+
 const width = 730;
 const height = 500;
 const axes = 150;
 const url = '/static/data/KNMI_19911231.txt';
-
 
 /*
  * Main function which is executed when the page has been loaded 
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // transform data point and draw a line to that point
                 var plotPoint = transform([i, data[i].temp]);
+                // console.log(plotPoint);
                 if (i == 0) ctx.moveTo(plotPoint[0], plotPoint[1]);
                 else ctx.lineTo(plotPoint[0], plotPoint[1]);
             }
@@ -66,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // actually draw the lines
             ctx.stroke();
+
+            writeAxes(ctx, data);
         }
 
         else {
@@ -82,21 +87,36 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.width = width + axes;
 
     // flip the y-axis and move the canvas
-    ctx.transform(1, 0, 0, -1, 0, canvas.height);
+    // ctx.transform(1, 0, 0, -1, 0, canvas.height);
 
     // initialize axes 
     ctx.beginPath();
-    ctx.moveTo(axes, axes + height);
-    ctx.lineTo(axes, axes);
-    ctx.lineTo(axes + width, axes);
+    ctx.moveTo(axes, 0);
+    ctx.lineTo(axes, height);
+    ctx.lineTo(axes + width, height);
     ctx.stroke();
 
 });
 
 // write the labels on the axes
-function writeAxes(context, data) {
-    return undefined;
+function writeAxes(ctx, data) {
+    
+    var transform = createTransform(data);
+    var zeroPoint = transform([0, 0]);
+    ctx.textAlign = "center"; 
+    
+    ctx.moveTo(zeroPoint[0], zeroPoint[1]);
+    ctx.lineTo(zeroPoint[0] - 10, zeroPoint[1]);
+    ctx.fillText('0', zeroPoint[0] - 20, zeroPoint[1] + 3);
+
+    var minMax = findMinMax(data);
+    // for (var i = 0; i < )
+
+    
+    ctx.stroke();
 }
+
+
 
 // function to tansform coordinates
 function createTransform(data) {
@@ -104,24 +124,15 @@ function createTransform(data) {
     // determine x-scaling
     var xScale = width / data.length;
     
-    var min = 0;
-    var max = 0;
-    for (var i = 0; i < data.length; i++) {
-        if (data[i].temp < min) {
-            min = data[i].temp;
-        }
-        else if (data[i].temp > max) {
-            max = data[i].temp;
-        }
-    }
+    var minMax = findMinMax(data);
 
     // get lowest y value and base scaling of y on it
-    var yMin = Math.abs(Math.floor(min));
-    var yScale = height / (yMin + Math.ceil(max));
+    var yMin = Math.abs(Math.floor(minMax[0]));
+    var yScale = -(height / (yMin + Math.ceil(minMax[1])));
 
     return function(date) {
         var x = axes + (xScale * date[0]);
-        var y = axes + (yMin + date[1]) * yScale;
+        var y = height + (yMin + date[1]) * yScale;
         return [x, y];
     }
 }
@@ -157,4 +168,20 @@ function csvJSON(csv){
         result.push(obj);
     }
     return result; //JavaScript object
+}
+
+function findMinMax(data) {
+    var min = 0;
+    var max = 0;
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].temp < min) {
+            min = data[i].temp;
+            console.log(min);
+        }
+        else if (data[i].temp > max) {
+            max = data[i].temp;
+            console.log(max);
+        }
+    }
+    return [min, max];
 }
