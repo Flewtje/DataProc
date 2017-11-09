@@ -101,3 +101,11 @@ ENV/
 .mypy_cache/
 
 *.swp
+
+# LaTeX
+*.toc
+*.synctex.gz
+*.log
+*.fls
+*.fdb_latexmk
+*.aux

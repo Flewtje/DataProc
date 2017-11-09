@@ -4,8 +4,7 @@
  * Draws a graph based on KNMI data
  */ 
 
-// set size of plot and other constants
-
+// set size of initial plot and other constants
 'use strict';
 var width = 1000;
 var height = 500;
@@ -13,16 +12,14 @@ const axes = 50;
 const url = 'static/KNMI_19911231.txt';
 const monthStrings = ['january', 'february', 'march', 'april', 'may', 'june', 
 'july', 'august', 'september', 'october', 'november', 'december'];
-var transform;
-// var ctx;
-
-/*
- * Main function which is executed when the page has been loaded 
- */
+var transform, minMax;
 
 
+
+// execute when DOM has been loaded
 document.addEventListener('DOMContentLoaded', function() {
     
+    // find canvas
     var canvas = document.getElementById('graph');
     
     // initialize data request
@@ -33,47 +30,62 @@ document.addEventListener('DOMContentLoaded', function() {
     dataRequest.addEventListener('load', function() {
         if (this.readyState == 4 && (this.status == 200 || 
             this.status == 304)) {
+            
+            // convert data to objects and find minMax
             var data = csvJSON(this.responseText);
-
+            minMax = findMinMax(data);
+            // add listeners for changes in user input and let the rewrite the 
+            // graph
             document.getElementById('height').addEventListener('change', function() {
                 height = parseInt(this.value);
                 writeGraph(canvas, data);
             });
-
             document.getElementById('width').addEventListener('change', function() {
                 width = parseInt(this.value);
                 writeGraph(canvas, data);
             });
-            // store data as an array of objects
+
+            // draw graph
             writeGraph(canvas, data);        
         }
 
+        // throw error if data couln't be loaded
         else {
             throw 'Failed to load data.';
         }
     });
 
-    // actually get the data
+    // give command to get the data
     dataRequest.open('get', url, true);
     dataRequest.send();
 
 });
 
 
-function writeGraph(canvas, data) {
 // write the function data to the canvas
+function writeGraph(canvas, data) {
     
+    // get the context from the canvas and clear it    
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // set width and height
     canvas.width = width + axes + 50;
     canvas.height = height + axes;
+
+    // create transform function
     transform = createTransform(data);
 
+    // draw empty axes
     ctx.beginPath();
     ctx.moveTo(axes, 0);
     ctx.lineTo(axes, height);
     ctx.lineTo(axes + width, height);
     ctx.stroke();
+
+    // and fill them
+    writeYAxis(ctx, data);
+    writeXAxis(ctx, data);
 
     for (var i = 0; i < data.length; i++) {
         
@@ -106,43 +118,47 @@ function writeGraph(canvas, data) {
 
     // actually draw the lines
     ctx.stroke();
-
-    writeYAxis(ctx, data);
-    writeXAxis(ctx, data);
 }
 
 // write the labels on the y axis
 function writeYAxis(ctx, data) {
     
-    var zeroPoint = transform([0, 0]);
     ctx.textAlign = "center"; 
-    
+
+    // start by writing axis at (x, y) = (0, 0)
+    var zeroPoint = transform([0, 0]);
     ctx.moveTo(zeroPoint[0], zeroPoint[1]);
     ctx.lineTo(zeroPoint[0] - 10, zeroPoint[1]);
+    
+    // write '0' at the dash
     ctx.fillText('0', zeroPoint[0] - 20, zeroPoint[1] + 3);
 
-    var minMax = findMinMax(data);
-    for (var i = 0; i < minMax[1]; i += 50) {
+    // draw positive lines every 5 degrees
+    for (var i = 50; i < minMax[1]; i += 50) {
         var axisPoint = transform([0, i]);
         ctx.moveTo(axisPoint[0], axisPoint[1]);
         ctx.lineTo(axisPoint[0] - 10, axisPoint[1]);
         ctx.fillText(i / 10, axisPoint[0] - 20, axisPoint[1] + 3);
     }
-
+    
+    // draw negative lines
     for (var i = -50; i > minMax[0]; i -= 50) {
         var axisPoint = transform([0, i]);
         ctx.moveTo(axisPoint[0], axisPoint[1]);
         ctx.lineTo(axisPoint[0] - 10, axisPoint[1]);
         ctx.fillText(i / 10, axisPoint[0] - 20, axisPoint[1] + 3);
-    }    
+    }
     ctx.stroke();
 }
 
 function writeXAxis(ctx, data) {
 
+    ctx.textAlign = "center";
+    
     // set month to zero
     var month = 0;
-    for (var i = 0; i < data.length - 1; i++) {
+
+    for (var i = 0; i < data.length; i++) {
         if (parseInt(data[i].date.toString()[4] + 
             data[i].date.toString()[5]) != month) {
             var axisPoint = transform([i, 0]);
@@ -171,9 +187,6 @@ function createTransform(data) {
 
     // determine x-scaling
     var xScale = width / data.length;
-    
-    // find minimum and maximum
-    var minMax = findMinMax(data);
 
     // get lowest y value and base scaling of y on it
     var yMin = Math.abs(Math.floor(minMax[0]));
@@ -237,7 +250,7 @@ function findMinMax(data) {
         }   
     
     }
-
-    // widen the gap so 
+    
+    // widen the gap so it looks nicer 
     return [min - 10, max + 10];
 }
