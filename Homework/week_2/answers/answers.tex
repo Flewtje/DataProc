@@ -1,12 +1,49 @@
 \documentclass[a4paper]{scrartcl}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage[dutch]{babel}
-\usepackage{braket}
+%\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{amssymb}
+%\usepackage[dutch]{babel}
+%\usepackage{braket}
 \usepackage{a4wide}
 \usepackage{listings}
+\usepackage{color}
+\usepackage{inputenc}[utf8]
 
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% http://lenaherrmann.net/2010/05/20/javascript-syntax-highlighting-in-the-latex-listings-package
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
 
 \title{Answers week 2}
 \author{Sebastiaan Arendsen}
@@ -24,17 +61,54 @@
 In javascript == will check if the two values are equal. The === operator will also check if it has the same type. Example:
 
 \begin{lstlisting}
-0 == 0: True
-0 == False: True
-0 === 0: True
-0 === False: False
+0 == 0 //True
+0 == False //True
+0 === 0 //True
+0 === False //False
 \end{lstlisting}
-
 \section{Explain what a closure is}
+Javascript allows functions to be defined within other functions. This makes them able have private variables. Example:
 
+\begin{lstlisting}
+function foo(input) {
+    var bar = input;
+    return function(baz) {
+        return bar + baz
+    }
+}
+
+var testFunc = foo(5);
+console.log(testFunc(3)); // 5 + 3 = 8
+\end{lstlisting}
+In this example the function testFunc is able to reach a variable declared in its ``parent'' function.
 
 \section{Explain what higher order functions are}
+Higher order functions are functions that return different functions. Example:
+
+\begin{lstlisting}
+var foo = function(bar, input) {
+    return function (input) {
+        return input.split(bar);
+    }
+}
+\end{lstlisting}
+This function can be used to create a csv splitter, or any other sv splitter. Example:
+\begin{lstlisting}
+var csvSplitter = foo(','); // function to split a string on every ','
+var tsvSplitter = foo('\t'); // function to split a string on every tab
+\end{lstlisting}
 
 \section{Explain what a query selector is and give an example line of JavaScript that uses a query selector.}
+Query selectors are ways with which you you can select elements based on CSS selectors. Example:
+\begin{lstlisting}
+<div class='foo'><input name='number'></div>
+\end{lstlisting}
+
+\begin{lstlisting}
+<script>
+    var number = document.querySelector('div.foo input[name='number']'); 
+    // selects the first input named number in div class foo
+</script>
+\end{lstlisting} 
 
 \end{document}

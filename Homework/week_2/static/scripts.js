@@ -10,7 +10,7 @@
 var width = 1000;
 var height = 500;
 const axes = 50;
-const url = 'static/KNMI_19901231.txt';
+const url = 'static/KNMI_19911231.txt';
 const monthStrings = ['january', 'february', 'march', 'april', 'may', 'june', 
 'july', 'august', 'september', 'october', 'november', 'december'];
 var transform, minMax;
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 height = parseInt(this.value);
                 writeGraph(canvas, data);
             });
+            
             document.getElementById('width').addEventListener('change', function() {
                 width = parseInt(this.value);
                 writeGraph(canvas, data);
