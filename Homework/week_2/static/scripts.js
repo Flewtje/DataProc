@@ -6,15 +6,14 @@
 
 // set size of initial plot and other constants
 'use strict';
+
 var width = 1000;
 var height = 500;
 const axes = 50;
-const url = 'static/KNMI_19911231.txt';
+const url = 'static/KNMI_19901231.txt';
 const monthStrings = ['january', 'february', 'march', 'april', 'may', 'june', 
 'july', 'august', 'september', 'october', 'november', 'december'];
 var transform, minMax;
-
-
 
 // execute when DOM has been loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -143,11 +142,13 @@ function writeYAxis(ctx, data) {
     
     // draw negative lines
     for (var i = -50; i > minMax[0]; i -= 50) {
+ 
         var axisPoint = transform([0, i]);
         ctx.moveTo(axisPoint[0], axisPoint[1]);
         ctx.lineTo(axisPoint[0] - 10, axisPoint[1]);
         ctx.fillText(i / 10, axisPoint[0] - 20, axisPoint[1] + 3);
     }
+
     ctx.stroke();
 }
 
@@ -158,23 +159,30 @@ function writeXAxis(ctx, data) {
     // set month to zero
     var month = 0;
 
+    // start a loop over all data positions
     for (var i = 0; i < data.length; i++) {
-        if (parseInt(data[i].date.toString()[4] + 
-            data[i].date.toString()[5]) != month) {
+
+        // check if 5th and 6th int together are not equal to month
+        if (parseInt(data[i].date.toString().substr(4, 2)) != month) {
+
+            // draw a line downwards
             var axisPoint = transform([i, 0]);
             ctx.moveTo(axisPoint[0], height);
             ctx.lineTo(axisPoint[0], height + 10);
             
-            // 
+            // write the month below the line
             if (month != 0) {
-                ctx.fillText(monthStrings[month], axisPoint[0], height + 30);
+                ctx.fillText(monthStrings[month], 
+                    axisPoint[0], height + 30);
             }
 
+            // change january to the year
             else {
-                ctx.fillText(data[i].date.toString().slice(0, 4), axisPoint[0], 
-                    height + 30);
+                ctx.fillText(data[i].date.toString().slice(0, 4), 
+                    axisPoint[0], height + 30);
             }
             
+            // add to the months or reset if month is 12
             if (month < 12) month++;
             else month = 0;
         }
