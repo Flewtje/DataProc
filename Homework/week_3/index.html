@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="static/d3.v4.min.js"></script>
     <script src="static/scripts.js"></script>
     <style type="text/css">
         .chart rect {
@@ -13,10 +13,24 @@
             font: 10px sans-serif;
             text-anchor: end;
         }
+        .axis--x text {
+            font: 200px sans-serif;
+        }
+
+        .axis--y text {
+            font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
     </style>
     <title>Pirates vs. temperature</title>
 </head>
 <body>
-    <svg class="chart"></svg>
+
 </body>
 </html>
