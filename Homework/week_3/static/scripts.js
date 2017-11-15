@@ -6,7 +6,7 @@
 'use strict';
 
 // set data and margins and sizes
-var DATA_URL = 'data/pirates_temperature.json';
+var DATA_URL = 'data/topmovies.json';
 var margin = {top: 20, right: 30, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -21,29 +21,29 @@ document.addEventListener('DOMContentLoaded', function() {
             throw error;
         }
 
-        for (var i = 0; i < json.length; i++) {
+        // create data based on runtime
+        var data = d3.nest()
+            .key(function(d) { return Math.floor(d.Runtime / 5) * 5; })
+            .rollup(function(v) { return v.length; })
+            .entries(json)
 
-        }
+            // sort the data ascending
+            .sort(function(a, b) { return a.key - b.key; });
 
         // draw the bar graph
-        drawBarGraph(json, 'number of pirates');
+        drawBarGraph(data, 'key', 'value');
     });
 })
 
-function drawBarGraph(json, entry) {
+function drawBarGraph(data, xKey, yKey) {
 
-    // var x = d3.scaleQuantize()
-    //     .range()
-    //     .domain([d3.min(json, function(d) { return d.runtime })])
-
-    // set x-scaling which should be a band
     var x = d3.scaleBand()
 
         // range goes from 0 to width and add a padding of 0.2
-        .rangeRound([0, width]).padding(0.2)
+        .rangeRound([0, width]).padding(0.1)
 
         // domain is a map of all the data years
-        .domain(json.map(function(d) { return d.year; }));
+        .domain(data.map(function(d) { return d[xKey]; }));
 
     // set y-scaling as linear
     var y = d3.scaleLinear()
@@ -52,7 +52,7 @@ function drawBarGraph(json, entry) {
         .range([height, 0])
 
         // domain is from 0 till max data-point
-        .domain([0, d3.max(json, function(d) { return d[entry]; })]);
+        .domain([0, d3.max(data, function(d) { return d[yKey]; })]);
 
     // create svg chart and set its width and height and class
     var chart = d3.select('body').append('svg')
@@ -92,14 +92,14 @@ function drawBarGraph(json, entry) {
     chart.selectAll('.bar')
 
         // add data to the future bars
-        .data(json)
+        .data(data)
 
     // add all data pieces and append a 'rect' to it, with class 'bar'
     .enter().append('rect')
         .attr('class', 'bar')
-        .attr('x', function(d) { return x(d.year); })
-        .attr('y', function(d) { return y(d[entry]); })
-        .attr('height', function(d) {return height - y(d[entry]); })
+        .attr('x', function(d) { return x(d[xKey]); })
+        .attr('y', function(d) { return y(d[yKey]); })
+        .attr('height', function(d) {return height - y(d[yKey]); })
         .attr('width', x.bandwidth());
 }
 
