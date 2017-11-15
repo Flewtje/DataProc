@@ -4,28 +4,24 @@
     <meta charset="utf-8">
     <script src="static/d3.v4.min.js"></script>
     <script src="static/scripts.js"></script>
-    <style type="text/css">
-        .chart rect {
-            fill: steelblue;
-        }
-        .chart text {
-            fill: white;
-            font: 10px sans-serif;
-            text-anchor: end;
-        }
-        .axis--x text {
-            font: 200px sans-serif;
+    <style>
+        .bar {
+          fill: steelblue;
         }
 
-        .axis--y text {
-            font: 10px sans-serif;
+        .axis text {
+          font: 10px sans-serif;
         }
 
         .axis path,
         .axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .x.axis path {
+          display: none;
         }
     </style>
     <title>Pirates vs. temperature</title>

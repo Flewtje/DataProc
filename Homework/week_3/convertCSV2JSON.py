@@ -9,8 +9,8 @@ import csv
 import json
 
 # constants
-INPUT = 'data/pirates_temperature.csv'
-OUTPUT = 'data/pirates_temperature.json'
+INPUT = 'data/topmovies.csv'
+OUTPUT = 'data/topmovies.json'
 
 # function to read csv file
 def csv_reader(f):
