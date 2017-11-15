@@ -1,6 +1,5 @@
 /* scripts.js
- * Creates a plot of the average temperature and the amount of pirates over the
- * years.
+ * Creates a plot of the 
  */
 
 'use strict';
@@ -9,7 +8,8 @@
 var DATA_URL = 'data/topmovies.json';
 var margin = {top: 20, right: 30, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 500 - margin.top - margin.bottom,
+    xStep = 5;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -21,35 +21,41 @@ document.addEventListener('DOMContentLoaded', function() {
             throw error;
         }
 
-        // create data based on runtime
+        // create data based on runtime rounded down to nearest five
         var data = d3.nest()
-            .key(function(d) { return Math.floor(d.Runtime / 5) * 5; })
-            .rollup(function(v) { return v.length; })
+            .key(function(d) { return Math.floor(d.Runtime / xStep) * xStep; })
+            .rollup(function(d) { return d.length; })
             .entries(json)
 
             // sort the data ascending
             .sort(function(a, b) { return a.key - b.key; });
 
         // draw the bar graph
-        drawBarGraph(data, 'key', 'value');
+        drawBarGraph(data, 'key', xStep, 'value', 'Average runtime of IMDB top 250 movies.');
     });
 })
 
-function drawBarGraph(data, xKey, yKey) {
+function drawBarGraph(data, xKey, xStep, yKey, name) {
 
+    // get an array of min and max data
+    var xMinMax = d3.extent(data, function(d) {
+        return parseInt(d[xKey]);
+    });
+
+    // set x scaling as band
     var x = d3.scaleBand()
 
         // range goes from 0 to width and add a padding of 0.2
         .rangeRound([0, width]).padding(0.1)
 
         // domain is a map of all the data years
-        .domain(data.map(function(d) { return d[xKey]; }));
+        .domain(d3.range(xMinMax[0], xMinMax[1] + xStep, xStep));
 
     // set y-scaling as linear
     var y = d3.scaleLinear()
 
         // range is reversed
-        .range([height, 0])
+        .rangeRound([height, 0])
 
         // domain is from 0 till max data-point
         .domain([0, d3.max(data, function(d) { return d[yKey]; })]);
@@ -57,7 +63,7 @@ function drawBarGraph(data, xKey, yKey) {
     // initialize tooltip
     var tip = d3.tip()
         .attr("class", "d3-tip")
-        .offset([40, 0])
+        .offset([5, 0])
         .html(function(d) { return "Frequency: " + d[yKey]; });
 
     // create svg chart and set its width and height and class
@@ -67,14 +73,14 @@ function drawBarGraph(data, xKey, yKey) {
         // setting width and height like this makes for simple drawing
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin. bottom)
-        .call(tip);
+        .call(tip)
 
     // append a 'g' element which groups every other child element
-    chart.append('g')
+    var canvas = chart.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // create and place x-axis
-    chart.append('g')
+    canvas.append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + height + ')')
 
@@ -82,21 +88,23 @@ function drawBarGraph(data, xKey, yKey) {
         .call(d3.axisBottom(x));
 
     // create and place y-axis
-    chart.append('g')
+    canvas.append('g')
         .attr('class', 'y axis')
         .call(d3.axisLeft(y));
 
-    // append title to the screen
+    // append title to the screen in the top margin
     chart.append('text')
-        .attr('transform', 'translate(' + (width * 0.75) + ',0)')
+        .attr('transform', 'translate(' + (width * 0.5 + margin.left) + ',0)')
         .attr('y', 6)
         .attr('dy', '.71em')
         .style('text-anchor', 'end')
-        .text('Runtime of IMDB top 250 movies');
+        .text(name);
 
-    // select all will choose all class 'bar' elements, of which there are as of
-    // yet 0
-    chart.selectAll('.bar')
+    /* Select all will choose all class 'bar' elements, of which there are as of
+     * yet 0. Doing it this way allows us to add bar elements which we can all 
+     * update from the same place after adding data to it.
+     */
+    canvas.selectAll('.bar')
 
         // add data to the future bars
         .data(data)
@@ -110,6 +118,9 @@ function drawBarGraph(data, xKey, yKey) {
         .attr('width', x.bandwidth())
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
+}
 
-
+function type(d) {
+    d = +d;
+    return d;
 }
