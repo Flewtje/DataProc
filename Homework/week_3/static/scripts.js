@@ -1,17 +1,25 @@
 /* scripts.js
- * Creates a plot of the 
+ * Sebastiaan Arensden 6060072
+ * Data Processing - Minor Programmeren 
+ * Creates a plot of the runtime distribution of the IMDB top 250 movies.
  */
 
 'use strict';
 
 // set data and margins and sizes
-var DATA_URL = 'data/topmovies.json';
-var margin = {top: 20, right: 30, bottom: 30, left: 40},
+var DATA_URL = 'data/topmovies.json',
+    margin = {top: 20, right: 30, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom,
-    xStep = 5;
+    xStep = 5,
+    plotValue = 'Runtime',
+    plotName = 'Runtime distribution of IMDB top 250 movies.',
+    PADDING = 0.1;
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    // set title of document
+    document.title = plotName;
 
     // get json and draw graph
     d3.json(DATA_URL, function(error, json) {
@@ -21,9 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
             throw error;
         }
 
-        // create data based on runtime rounded down to nearest five
+        // create data based on runtime rounded down to nearest xStep
         var data = d3.nest()
-            .key(function(d) { return Math.floor(d.Runtime / xStep) * xStep; })
+            .key(function(d) { return Math.floor(d[plotValue] / xStep) * xStep; })
+
+            // value should be the amount of entries in key
             .rollup(function(d) { return d.length; })
             .entries(json)
 
@@ -31,9 +41,15 @@ document.addEventListener('DOMContentLoaded', function() {
             .sort(function(a, b) { return a.key - b.key; });
 
         // draw the bar graph
-        drawBarGraph(data, 'key', xStep, 'value', 'Average runtime of IMDB top 250 movies.');
+        drawBarGraph(data, 'key', xStep, 'value', plotName);
     });
-})
+});
+
+/* Function that will actually write the graph. It will plot the xKey value on 
+ * the x-axis in steps of xStep accumulated. yKey will be on the yAxis. Name 
+ * should be the name of the graph.  
+ * Data: Array of JSONs containing xKey and yKey values.
+ */
 
 function drawBarGraph(data, xKey, xStep, yKey, name) {
 
@@ -45,8 +61,8 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
     // set x scaling as band
     var x = d3.scaleBand()
 
-        // range goes from 0 to width and add a padding of 0.2
-        .rangeRound([0, width]).padding(0.1)
+        // range goes from 0 to width and add a padding
+        .rangeRound([0, width]).padding(PADDING)
 
         // domain is a map of all the data years
         .domain(d3.range(xMinMax[0], xMinMax[1] + xStep, xStep));
@@ -62,13 +78,13 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
 
     // initialize tooltip
     var tip = d3.tip()
-        .attr("class", "d3-tip")
+        .attr('class', 'd3-tip')
         .offset([5, 0])
-        .html(function(d) { return "Frequency: " + d[yKey]; });
+        .html(function(d) { return 'Frequency: ' + d[yKey]; });
 
     // create svg chart and set its width and height and class
-    var chart = d3.select('body').append('svg')
-        .attr('class', 'chart')
+    var svg = d3.select('body').append('svg')
+        // .attr('class', 'chart')
 
         // setting width and height like this makes for simple drawing
         .attr('width', width + margin.left + margin.right)
@@ -76,35 +92,58 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
         .call(tip)
 
     // append a 'g' element which groups every other child element
-    var canvas = chart.append('g')
+    var chart = svg.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // create and place x-axis
-    canvas.append('g')
+    chart.append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + height + ')')
 
         // call a function on the axis which creates the axis for us
-        .call(d3.axisBottom(x));
-
+        .call(d3.axisBottom(x))
+    
     // create and place y-axis
-    canvas.append('g')
+    chart.append('g')
         .attr('class', 'y axis')
         .call(d3.axisLeft(y));
 
+    // add x-axis label
+    svg.append('text')
+        .attr('class', 'label')
+        .attr('transform', 'translate(' + (width + margin.left) + ', ' + (margin.top + margin.bottom + height) + ')')
+        .style('text-anchor', 'end')
+        .text('Runtime in minutes');
+
+    // svg.append('text')
+    //     .attr('class', 'label')
+    //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+    //     .style('text-anchor', 'begin')
+    //     .text('Frequency');
+
+    svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('class', 'label')
+            .attr('y', 0 - margin.left)
+            .attr('x', 0 - (height / 2))
+            .attr('dy', '0.75em')
+            .style('text-anchor', 'middle')
+            .text('Value');
+
     // append title to the screen in the top margin
-    chart.append('text')
+    svg.append('text')
+        .attr('class', 'title')
         .attr('transform', 'translate(' + (width * 0.5 + margin.left) + ',0)')
         .attr('y', 6)
         .attr('dy', '.71em')
-        .style('text-anchor', 'end')
+        .style('text-anchor', 'middle')
         .text(name);
 
     /* Select all will choose all class 'bar' elements, of which there are as of
      * yet 0. Doing it this way allows us to add bar elements which we can all 
      * update from the same place after adding data to it.
      */
-    canvas.selectAll('.bar')
+    chart.selectAll('.bar')
 
         // add data to the future bars
         .data(data)
@@ -112,15 +151,14 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
     // add all data pieces and append a 'rect' to it, with class 'bar'
     .enter().append('rect')
         .attr('class', 'bar')
+
+        // x and y values are the 
         .attr('x', function(d) { return x(d[xKey]); })
         .attr('y', function(d) { return y(d[yKey]); })
         .attr('height', function(d) {return height - y(d[yKey]); })
         .attr('width', x.bandwidth())
+
+        // add tooltip interactivity
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
-}
-
-function type(d) {
-    d = +d;
-    return d;
 }
