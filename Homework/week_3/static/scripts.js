@@ -54,6 +54,12 @@ function drawBarGraph(data, xKey, yKey) {
         // domain is from 0 till max data-point
         .domain([0, d3.max(data, function(d) { return d[yKey]; })]);
 
+    // initialize tooltip
+    var tip = d3.tip()
+        .attr("class", "d3-tip")
+        .offset([40, 0])
+        .html(function(d) { return "Frequency: " + d[yKey]; });
+
     // create svg chart and set its width and height and class
     var chart = d3.select('body').append('svg')
         .attr('class', 'chart')
@@ -61,9 +67,10 @@ function drawBarGraph(data, xKey, yKey) {
         // setting width and height like this makes for simple drawing
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin. bottom)
+        .call(tip);
 
     // append a 'g' element which groups every other child element
-    .append('g')
+    chart.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // create and place x-axis
@@ -77,15 +84,15 @@ function drawBarGraph(data, xKey, yKey) {
     // create and place y-axis
     chart.append('g')
         .attr('class', 'y axis')
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(y));
 
-    // append title to the y-axis
-    .append('text')
-        .attr('transform', 'rotate(-90)')
+    // append title to the screen
+    chart.append('text')
+        .attr('transform', 'translate(' + (width * 0.75) + ',0)')
         .attr('y', 6)
         .attr('dy', '.71em')
         .style('text-anchor', 'end')
-        .text('Amount of pirates');
+        .text('Runtime of IMDB top 250 movies');
 
     // select all will choose all class 'bar' elements, of which there are as of
     // yet 0
@@ -100,10 +107,9 @@ function drawBarGraph(data, xKey, yKey) {
         .attr('x', function(d) { return x(d[xKey]); })
         .attr('y', function(d) { return y(d[yKey]); })
         .attr('height', function(d) {return height - y(d[yKey]); })
-        .attr('width', x.bandwidth());
-}
+        .attr('width', x.bandwidth())
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
 
-function type(d) {
-    d.value = +d.value;
-    return d;
+
 }
