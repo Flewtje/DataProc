@@ -7,14 +7,17 @@
 'use strict';
 
 // set data and margins and sizes
-var DATA_URL = 'data/topmovies.json',
-    margin = {top: 20, right: 30, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
     height = 500 - margin.top - margin.bottom,
+    width = 960 - margin.left - margin.right,
     xStep = 5,
     plotValue = 'Runtime',
     plotName = 'Runtime distribution of IMDB top 250 movies.',
-    PADDING = 0.1;
+    PADDING = 0.1,
+    MAXLETTER = 35,
+
+    // this is the data gained with the crawler from week 1
+    DATA_URL = 'data/topmovies.json';
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -34,32 +37,27 @@ document.addEventListener('DOMContentLoaded', function() {
             .key(function(d) { return Math.floor(d[plotValue] / xStep) * xStep; })
 
             // value should be the amount of entries in key
-            // .rollup(function(d) { return d.length; })
             .entries(json)
 
             // sort the data ascending
             .sort(function(a, b) { return a.key - b.key; });
 
-        console.log(data);
-
-        // console.log(data);
-
         // draw the bar graph
-        drawBarGraph(data, 'key', xStep, 'Title', plotName);
+        drawBarGraph(data, xStep, 'Title');
     });
 });
 
-/* Function that will actually write the graph. It will plot the xKey value on 
- * the x-axis in steps of xStep accumulated. yKey will be on the yAxis. Name 
- * should be the name of the graph.  
- * Data: Array of JSONs containing xKey and yKey values.
+/* Function that will actually write the graph. It will plot the x value on 
+ * the x-axis in steps of xStep accumulated.
+ * tipData: the attribute which shall be printed on the tooltip
+ * data: Array of nested JSONS
  */
 
-function drawBarGraph(data, xKey, xStep, yKey, name) {
+function drawBarGraph(data, xStep, tipData) {
 
     // get an array of min and max data
     var xMinMax = d3.extent(data, function(d) {
-        return parseInt(d[xKey]);
+        return parseInt(d.key);
     });
 
     // set x scaling as band
@@ -88,13 +86,7 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
         .html(function(d) { 
             var rv = 'Movies: <br>'
             for (var i = 0; i < d.values.length; i++) {
-                if (d.values[i][yKey].length > 35) {
-                    rv += d.values[i][yKey].substr(0, 35) + '<br>';
-                }
-                else {
-                    rv += d.values[i][yKey] + '<br>';               
-                }
-
+                rv += d.values[i][tipData].substr(0, MAXLETTER) + '<br>';
             }
             return rv;
         });
@@ -125,27 +117,13 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
         .attr('class', 'y axis')
         .call(d3.axisLeft(y));
 
-    // add x-axis label
+    // add x-axis label to the bottom right margin
     svg.append('text')
         .attr('class', 'label')
         .attr('transform', 'translate(' + (width + margin.left) + ', ' + (margin.top + margin.bottom + height) + ')')
         .style('text-anchor', 'end')
-        .text('Runtime in minutes');
+        .text('Runtime');
 
-    // svg.append('text')
-    //     .attr('class', 'label')
-    //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-    //     .style('text-anchor', 'begin')
-    //     .text('Frequency');
-
-    svg.append('text')
-            .attr('transform', 'rotate(-90)')
-            .attr('class', 'label')
-            .attr('y', 0 - margin.left)
-            .attr('x', 0 - (height / 2))
-            .attr('dy', '0.75em')
-            .style('text-anchor', 'middle')
-            .text('Value');
 
     // append title to the screen in the top margin
     svg.append('text')
@@ -154,7 +132,7 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
         .attr('y', 6)
         .attr('dy', '.71em')
         .style('text-anchor', 'middle')
-        .text(name);
+        .text(plotName);
 
     /* Select all will choose all class 'bar' elements, of which there are as of
      * yet 0. Doing it this way allows us to add bar elements which we can all 
@@ -169,8 +147,8 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
     .enter().append('rect')
         .attr('class', 'bar')
 
-        // x and y values are the 
-        .attr('x', function(d) { return x(d[xKey]); })
+        // place the bars
+        .attr('x', function(d) { return x(d.key); })
         .attr('y', function(d) { return y(d.values.length); })
         .attr('height', function(d) {return height - y(d.values.length); })
         .attr('width', x.bandwidth())
