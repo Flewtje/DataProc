@@ -34,14 +34,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .key(function(d) { return Math.floor(d[plotValue] / xStep) * xStep; })
 
             // value should be the amount of entries in key
-            .rollup(function(d) { return d.length; })
+            // .rollup(function(d) { return d.length; })
             .entries(json)
 
             // sort the data ascending
             .sort(function(a, b) { return a.key - b.key; });
 
+        console.log(data);
+
+        // console.log(data);
+
         // draw the bar graph
-        drawBarGraph(data, 'key', xStep, 'value', plotName);
+        drawBarGraph(data, 'key', xStep, 'Title', plotName);
     });
 });
 
@@ -74,13 +78,26 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
         .rangeRound([height, 0])
 
         // domain is from 0 till max data-point
-        .domain([0, d3.max(data, function(d) { return d[yKey]; })]);
+        .domain([0, d3.max(data, function(d) { return d.values.length; })]);
 
     // initialize tooltip
     var tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([5, 0])
-        .html(function(d) { return 'Frequency: ' + d[yKey]; });
+        .direction('s')
+        .html(function(d) { 
+            var rv = 'Movies: <br>'
+            for (var i = 0; i < d.values.length; i++) {
+                if (d.values[i][yKey].length > 35) {
+                    rv += d.values[i][yKey].substr(0, 35) + '<br>';
+                }
+                else {
+                    rv += d.values[i][yKey] + '<br>';               
+                }
+
+            }
+            return rv;
+        });
 
     // create svg chart and set its width and height and class
     var svg = d3.select('body').append('svg')
@@ -154,8 +171,8 @@ function drawBarGraph(data, xKey, xStep, yKey, name) {
 
         // x and y values are the 
         .attr('x', function(d) { return x(d[xKey]); })
-        .attr('y', function(d) { return y(d[yKey]); })
-        .attr('height', function(d) {return height - y(d[yKey]); })
+        .attr('y', function(d) { return y(d.values.length); })
+        .attr('height', function(d) {return height - y(d.values.length); })
         .attr('width', x.bandwidth())
 
         // add tooltip interactivity
