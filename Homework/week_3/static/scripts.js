@@ -7,7 +7,7 @@
 'use strict';
 
 // set data and margins and sizes
-var margin = {top: 20, right: 30, bottom: 30, left: 40},
+var margin = {top: 50, right: 30, bottom: 30, left: 40},
     height = 500 - margin.top - margin.bottom,
     width = 960 - margin.left - margin.right,
     xStep = 5,
@@ -28,9 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     d3.json(DATA_URL, function(error, json) {
 
         // catch error
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         // create data based on runtime rounded down to nearest xStep
         var data = d3.nest()
@@ -43,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .sort(function(a, b) { return a.key - b.key; });
 
         // draw the bar graph
-        drawBarGraph(data, xStep, 'Title');
+        drawNestedBarGraph(data, xStep, 'Title');
     });
 });
 
@@ -53,9 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
  * data: Array of nested JSONS
  */
 
-function drawBarGraph(data, xStep, tipData) {
+function drawNestedBarGraph(data, xStep, tipData) {
 
-    // get an array of min and max data
+    /* Get an array of min and max data.
+     * This is necessary beacause otherwise there is no way to add the last 
+     * data entry in the the x-domain.
+     */
     var xMinMax = d3.extent(data, function(d) {
         return parseInt(d.key);
     });
@@ -83,7 +84,7 @@ function drawBarGraph(data, xStep, tipData) {
         .attr('class', 'd3-tip')
         .offset([5, 0])
         .direction('s')
-        .html(function(d) { 
+        .html(function(d) {
             var rv = 'Movies: <br>'
             for (var i = 0; i < d.values.length; i++) {
                 rv += d.values[i][tipData].substr(0, MAXLETTER) + '<br>';
@@ -93,7 +94,6 @@ function drawBarGraph(data, xStep, tipData) {
 
     // create svg chart and set its width and height and class
     var svg = d3.select('body').append('svg')
-        // .attr('class', 'chart')
 
         // setting width and height like this makes for simple drawing
         .attr('width', width + margin.left + margin.right)

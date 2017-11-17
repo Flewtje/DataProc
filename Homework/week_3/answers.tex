@@ -1,0 +1,147 @@
+\documentclass[a4paper]{scrartcl}
+%\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{amssymb}
+%\usepackage[dutch]{babel}
+%\usepackage{braket}
+\usepackage{a4wide}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{inputenc}[utf8]
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+
+% http://lenaherrmann.net/2010/05/20/javascript-syntax-highlighting-in-the-latex-listings-package
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+   backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+\title{Answers week 3}
+\author{Sebastiaan Arendsen}
+
+\newcommand{\I}{\mathtt{i}}
+\newcommand{\E}{\mathrm{e}}
+\newcommand{\integral}[4]{\int_{#1}^{#2}\!#3\,\mathrm{d}#4}
+\newcommand{\ointegral}[4]{\oint_{#1}^{#2}\!#3\,\mathrm{d}#4}
+
+
+\begin{document}
+\maketitle
+
+\section{How can D3 access and change the DOM? What do select and selectAll do?}
+
+D3 has multiple functions to access and change the DOM. Some examples: 
+
+\begin{lstlisting}
+var svg = d3.select('body').append('svg'); // appends an svg to the body
+svg.append('text')
+        .attr('class', 'label')
+        .attr('transform', 'translate(' + (width + margin.left) + ', ' + (margin.top + margin.bottom + height) + ')')
+        .style('text-anchor', 'end')
+        .text('Runtime'); // adds a text element to the svg element
+\end{lstlisting}
+
+\begin{lstlisting}
+/* Select all will choose all class 'bar' elements, of which there are as of
+* yet 0. Doing it this way allows us to add bar elements which we can all 
+* update from the same place after adding data to it.
+*/
+chart.selectAll('.bar')
+
+        // add data to the future bars
+        .data(data)
+
+    // add all data pieces and append a 'rect' to it, with class 'bar'
+    .enter().append('rect')
+        .attr('class', 'bar')
+
+        // place the bars
+        .attr('x', function(d) { return x(d.key); })
+        .attr('y', function(d) { return y(d.values.length); })
+        .attr('height', function(d) {return height - y(d.values.length); })
+        .attr('width', x.bandwidth())
+
+        // add tooltip interactivity
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
+\end{lstlisting}
+
+\section{What are the d and i in function(d)\{\} and function(d, i)\{\}?}
+The $\mathtt{d}$ and $\mathtt{i}$ exist when a d3 function can use a callback function. They refer to the variables produces when iterating over the dataset. $\mathtt{d}$ is each data element, whereas $\mathtt{i}$ is the iteration counter.
+
+\section{Write sample lines of JavaScript to add a div element with class “barChart1” and to add an svg element with class “barChart2” with square dimensions.}
+
+\begin{lstlisting}
+var height = 100,
+    width = height;
+
+var divChart = d3.select('body')
+    .append('div')
+    .attr('class', 'barChart1')
+    .attr('height', height)
+    .attr('width', width);
+
+var svgChart = d3.select('body')
+    .append('svg')
+    .attr('class', 'barChart2')
+    .attr('height', height)
+    .attr('width', width);
+\end{lstlisting}
+
+\section{Describe append, update, enter, and exit at a high level. What does “selectAll + data + enter + append” refer to?}
+\begin{itemize}
+    \item append adds a DOM element to the currently selected element as a child.
+    \item update is when data is joined with the currently selected DOM element.
+    \item enter is the place where data which has not been placed yet is waiting. Calling enter will fill in this data into the selection.
+    \item exit is the reverse of enter and is a way to remove data entries from the visualization. Usually paired with remove().
+\end{itemize}
+
+The described chain of commands will lead to:
+\begin{itemize}
+    \item Selecting all the elements which will hold our data.
+    \item Adding the relevant data to the selection.
+    \item Followed by actually `entering' the data into the selection.
+    \item The data is entered by using the append command. If this is the same object which has been selected by the SelectAll() it will belong to the selection and could also be removed using the exit().remove() command.
+\end{itemize}
+
+\section{What are the main differences between drawing a bar chart with HTML and SVG?}
+SVG has many useful objects used for drawing and is scalable. Making a pie-chart using HTML is (probably) very hard.
+
+\section{In drawing the simple bar chart with D3 and SVG, what elements were appended, and what parts of the graph did these elements correspond to?}
+
+\begin{itemize}
+    \item `g', is a grouping `anchor'. The chart itself and both axes where grouped.
+    \item `text', label on the x-axis and title of the chart. 
+    \item `rect', each bar of data.
+\end{itemize}
+
+\end{document}
