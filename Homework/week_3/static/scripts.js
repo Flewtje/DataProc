@@ -79,10 +79,19 @@ function drawNestedBarGraph(data, xStep, tipData) {
         // domain is from 0 till max data-point
         .domain([0, d3.max(data, function(d) { return d.values.length; })]);
 
-    // initialize tooltip
+    /* Initialize tooltip.
+     * Current position is in my opinion the most 'correct' place
+     * for the tooltip. However it is unfortunately very glitchy.
+     * If this unwanted behaviour one could change this:
+     * .offset([6, 0])
+     * This will place the tooltip on the bottom of the bar and stretch the
+     * page.
+     */
     var tip = d3.tip()
         .attr('class', 'd3-tip')
-        .offset([5, 0])
+        .offset(function(d) {
+            return [y(d.values.length) - height + 6,0];
+        })
         .direction('s')
         .html(function(d) {
             var rv = 'Movies: <br>'
