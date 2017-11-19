@@ -60,7 +60,7 @@ function drawScatterPlot(data, year) {
         .domain(d3.extent(data, function(d) {
             for (var i = 1; i < d.values.length; i++) {
                 if (d.values[i]['YEAR'] == year) {
-                    return (1.0 - parseFloat(d.values[i]['ISLOTPCT']));
+                    return (1.0 - parseFloat(d.values[i]['NORELPCT'].replace(',', '.')));
                 }
             }
             return undefined; 
@@ -100,7 +100,7 @@ function drawScatterPlot(data, year) {
         .attr('cy', function(d) {
             for (var i = 1; i < d.values.length; i++) {
                 if (d.values[i]['YEAR'] == year) {
-                    return y((1.0 - parseFloat(d.values[i]['ISLOTPCT'])));
+                    return y((1.0 - parseFloat(d.values[i]['NORELPCT'].replace(',', '.'))));
                 }
             }
             return undefined; 
