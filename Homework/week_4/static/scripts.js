@@ -93,8 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function drawScatterPlot(data, year) {
 
-    // x will be the GDP
-    var x = d3.scaleLinear()
+    /* x will be the GDP.
+     * After some experimentation it was found this looks best on a 
+     * logarithmic scale. Which is a sad fact on it's own.
+     */
+    var x = d3.scaleLog()
         .range([0, width])
         .domain(d3.extent(data, function(d) { return parseFloat(d.values[0][year]); }));
 
