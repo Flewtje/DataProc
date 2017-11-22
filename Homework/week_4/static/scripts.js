@@ -12,8 +12,8 @@
 
 // 'Magic Numbers'
 var margin = {top: 50, right: 30, bottom: 40, left: 200},
-    height = 500 - margin.top - margin.bottom,
-    width = 960 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom,
+    width = 1300 - margin.left - margin.right,
     padding = 0.1,
     DATA_URL_RELIGION = 'data/religion.json',
     DATA_URL_GDP = 'data/gdppc.json',
@@ -39,7 +39,7 @@ var margin = {top: 50, right: 30, bottom: 40, left: 200},
     labels = ['islam', 'christianity', 'judaism', 'buddhism', 'hinduism', 'other'], 
     xLabelText = 'GDP per capita',
     yLabelText = 'Religious perunage',
-    titleOfPlot = 'Religion vs GDP',
+    titleOfPlot = 'Religion vs GDP ' + year,
     legendSpacing = 25,
     legendOffset = 20,
     legendBox = 20,
@@ -49,6 +49,7 @@ var margin = {top: 50, right: 30, bottom: 40, left: 200},
     legendTopText = 'Dominant religion',
     legendBotText = 'Size represents population';
 
+// triggers when dom is loaded
 document.addEventListener('DOMContentLoaded', function() {
 
     // set document title
@@ -89,7 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
             drawScatterPlot(nested_json, year);
         });
 });
-
 
 function drawScatterPlot(data, year) {
 
@@ -156,32 +156,23 @@ function drawScatterPlot(data, year) {
                     var color;
                     var total = 0;
                     var highest = 0;
+                    var current = 0;
 
-                    // check which religion is most dominant and store it's color
-                    if (parseFloat(d.values[i][religions.christianity].replace(/,/g, '')) > highest) {
-                        color = colors.christianity;
-                        highest = parseFloat(d.values[i][religions.christianity].replace(/,/g, ''));
-                        total += highest;
-                    }
-                    if (parseFloat(d.values[i][religions.islam].replace(/,/g, '')) > highest) {
-                        color = colors.islam;
-                        highest = parseFloat(d.values[i][religions.islam].replace(/,/g, ''));
-                        total += highest;
-                    }
-                    if (parseFloat(d.values[i][religions.judaism].replace(/,/g, '')) > highest) {
-                        color = colors.judaism;
-                        highest = parseFloat(d.values[i][religions.islam].replace(/,/g, ''));
-                        total += highest;
-                    }
-                    if (parseFloat(d.values[i][religions.buddhism].replace(/,/g, '')) > highest) {
-                        color = colors.buddhism;
-                        highest = parseFloat(d.values[i][religions.buddhism].replace(/,/g, ''));
-                        total += highest;
-                    }
-                    if (parseFloat(d.values[i][religions.hinduism].replace(/,/g, '')) > highest) {
-                        color = colors.hinduism;
-                        highest = parseFloat(d.values[i][religions.hinduism].replace(/,/g, ''));
-                        total += highest;
+                    // check each religion for amount
+                    for (var key in religions) {
+
+                        current = parseFloat(d.values[i][religions[key]].replace(/,/g, ''));
+
+                        // store total
+                        total += current;
+                        if (current > highest) {
+
+                            // store color
+                            color = colors[key];
+
+                            // store highest
+                            highest = parseFloat(d.values[i][religions[key]].replace(/,/g, ''));
+                        }    
                     }
 
                     // get population number for final check
