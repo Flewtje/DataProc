@@ -5,7 +5,7 @@
 
 'use strict';
 
-var margin = {top: 50, right: 30, bottom: 30, left: 200},
+var margin = {top: 50, right: 30, bottom: 40, left: 200},
     height = 500 - margin.top - margin.bottom,
     width = 960 - margin.left - margin.right,
     padding = 0.1,
@@ -29,7 +29,10 @@ var margin = {top: 50, right: 30, bottom: 30, left: 200},
         judaism: 'JUDGEN',
         buddhism: 'BUDGEN',
         hinduism: 'HINDGEN'
-    };
+    },
+    xLabelText = 'GDP per capita',
+    yLabelText = 'Religious perunage',
+    titleOfPlot = 'Religion vs GDP';
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -100,14 +103,21 @@ function drawScatterPlot(data, year) {
     var chart = svg.append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    chart.append('g')
-        .attr('class', 'y axis')
+    var xAxis = chart.append('g')
+        .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x));
 
     chart.append('g')
         .attr('class', 'y axis')
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y))
+    .append('text')
+        .attr('class', 'label')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 6)
+        .attr('dy', '.71em')
+        .style('text-anchor', 'end')
+        .text('Perecentage religious');
 
     chart.selectAll('.dot')
         .data(data)
@@ -182,6 +192,18 @@ function drawScatterPlot(data, year) {
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
 
+        var xLabel = chart.append('text')
+            .attr('class', 'label')
+            .attr('transform', 'translate(' + width + ',' + (height + margin.bottom - 5) + ')')
+            .attr('text-anchor', 'end')
+            .text(xLabelText);
+
+        var yLabel = svg.append('text')
+            .attr('class', 'label')
+            .attr('transform', 'rotate(-90) translate(' + (margin.top - 220) + ',' + (margin.left - 30) + ')')
+            .attr('text-anchor', 'begin')
+            .text(yLabelText);
+
         var legend = svg.append('g')
             .attr('transform', 'translate(4,' + margin.top + ')');
 
@@ -189,16 +211,31 @@ function drawScatterPlot(data, year) {
         
         var groupLegend = legend.selectAll('g').data(labels).enter().append('g');
 
+        groupLegend.append('text')
+            .text('Dominant religion')
+            .attr('class', 'legend')
+
         groupLegend.append('rect')
-                .attr('class', 'bar')
-                .attr('fill', function(d, i) { return colors[d]; })
-                .attr('y', function(d, i) { return 5 + (i * 25); })
-                .attr('transform', 'translate(2,0)')
-                .attr('width', 20)
-                .attr('height', 20);
+            .attr('class', 'bar')
+            .attr('fill', function(d, i) { return colors[d]; })
+            .attr('y', function(d, i) { return 25 + (i * 25); })
+            .attr('transform', 'translate(2,0)')
+            .attr('width', 20)
+            .attr('height', 20);
 
         groupLegend.append('text')
-                .attr('y', function(d, i) { return 22 + (i * 25); })
-                .attr('x', 30)
-                .text(function(d) { return d[0].toUpperCase() + d.substring(1); });
+            .attr('y', function(d, i) { return 42 + (i * 25); })
+            .attr('x', 30)
+            .text(function(d) { return d[0].toUpperCase() + d.substring(1); });
+
+        groupLegend.append('text')
+            .attr('class', 'legend')
+            .attr('y', function() { return 25 + ((labels.length + 1) * 25) })
+            .text('Size represents population');
+
+        svg.append('text')
+            .attr('class', 'title')
+            .attr('transform', 'translate(' + (margin.left + width / 2) + ',' + (margin.top / 2) + ')')
+            .attr('text-anchor', 'center')
+            .text(titleOfPlot);
 }
