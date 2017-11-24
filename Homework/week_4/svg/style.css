@@ -1,0 +1,51 @@
+text.label {
+    font: 12px sans-serif;
+}
+
+text.title {
+    font: 18px serif;
+}
+text.legend {
+    font: 12px serif;
+}
+
+.bar {
+    stroke: steelblue;
+}
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+.st0 {
+    fill:#FFFFFF;stroke:#020203;stroke-miterlimit:10;
+}
+.st1 {
+    fill:#FFFFFF;stroke:#1E1E1C;stroke-miterlimit:10;
+}
+.st2 {
+    fill:none;stroke:#1E1E1C;stroke-miterlimit:10;
+}
+#kleur1 {
+    fill:green;
+}
+#kleur2 {
+    fill:red;
+}
+#kleur3 {
+    fill:steelblue;
+}
+#kleur4 {
+    fill:yellow;
+}
+#kleur5 {
+    fill:purple;
+}
+#kleur6 {
+    fill:black;
+}
