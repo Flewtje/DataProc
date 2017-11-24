@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
         d3.select('.st0')
             .attr('height', height);
 
-        // svg.attr('height', height);
     /* From this point on it will be much harder than needed to add text to the
      * The boxes aren grouped which makes it way harder to align the text
      * correctly. In ../static/scripts.js is a version of this legend which
