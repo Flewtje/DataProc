@@ -5,11 +5,12 @@ text.label {
 text.title {
     font: 18px serif;
 }
+
 text.legend {
     font: 12px serif;
 }
 
-.bar {
+.dot {
     stroke: steelblue;
 }
 .axis text {
