@@ -8,3 +8,5 @@ This repository is used for submitting exercises to the course Data Processing.
 [Week 2](https://flewtje.github.io/DataProc/Homework/week_2/index.html)
 
 [Week 3](https://flewtje.github.io/DataProc/Homework/week_3/index.html)
+
+[Week 4](https://flewtje.github.io/DataProc/Homework/week_4/index.html)
