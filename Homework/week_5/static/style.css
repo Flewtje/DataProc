@@ -1,14 +1,17 @@
+/* style sheet
+ */
 .axis--x path {
-  display: none;
+    display: none;
 }
 
 .line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
 }
 
 .title {
-    font-style: serif;
+    font-family: sans-serif;
     font-size: 36px;
+
 }
