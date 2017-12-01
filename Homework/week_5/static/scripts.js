@@ -17,7 +17,9 @@ var margin = {top: 50, right: 30, bottom: 40, left: 250},
     parseTime = d3.timeParse('%Y%m%d'),
     plotTitle = 'Temperature in De Bilt ',
     firstYear = 2014,
-    year = 0;
+    year = 0,
+    xLabelText = 'Date',
+    yLabelText = 'Temperature';
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -179,24 +181,40 @@ function plotLineGraphs(raw, data, year) {
         .on('click', function() {
             year = this.getAttribute('value');
             updateGraph(raw, data, year);
-        })
+        });
+
+    // add label to x-axis
+    chart.append('text')
+        .attr('class', 'label')
+        .attr('transform', 'translate(' + width + ',' + (height + margin.bottom - 5) + ')')
+        .attr('text-anchor', 'end')
+        .text(xLabelText);
+
+    // add label to y-axis
+    svg.append('text')
+        .attr('class', 'label')
+
+        // rotate and translate the y-axis
+        .attr('transform', 'rotate(-90) translate(' + (margin.top - 180) + ',' + (margin.left - 40 ) + ')')
+        .attr('text-anchor', 'begin')
+        .text(yLabelText);
 
     // draw line at zero
-    drawZeroLine(y);
+    drawZeroLine(y, chart);
 }
 
-function drawZeroLine(y) {
+function drawZeroLine(y, chart) {
 
     // remove previous zero line
     d3.select('.zero')
         .remove();
 
     // add new zero line
-    var zero = d3.select('svg').append('line')
-        .attr('x1', margin.left)
-        .attr('y1', y(0) + margin.top)
-        .attr('x2', margin.left + width)
-        .attr('y2', y(0) + margin.top)
+    var zero = chart.append('line')
+        .attr('x1', 0)
+        .attr('y1', y(0))
+        .attr('x2', width)
+        .attr('y2', y(0))
         .attr('stroke-width', 1)
         .attr('stroke-dasharray', '5, 5')
         .attr('stroke', 'black')
@@ -267,6 +285,6 @@ function updateGraph(raw, data, year) {
         .call(d3.axisLeft(y).ticks(20).tickFormat(d => d + ' °C'));
 
     // add zero line
-    drawZeroLine(y);   
+    drawZeroLine(y, chart);   
     
 }

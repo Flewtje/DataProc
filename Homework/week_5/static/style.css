@@ -15,3 +15,6 @@
     font-size: 36px;
 
 }
+text.label {
+    font: 12px sans-serif;
+}
