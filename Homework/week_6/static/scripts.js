@@ -126,7 +126,8 @@ function pieChartInit() {
 
 }
 
-function pieChartUpdate(data, year) {
+// function pieChartUpdate(data, year) {
+
+//     var pie = 
     
-    var pie = 
-}
+// }
