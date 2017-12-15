@@ -15,3 +15,11 @@
 .arc path {
   stroke: #fff;
 }
+.title {
+    font-size: 30px;
+    text-anchor: middle;
+}
+.title text {
+    font-size: 22px;
+    text-anchor: middle;
+}
