@@ -1,6 +1,8 @@
-    /* Sebastiaan Arendsen
+/* Sebastiaan Arendsen
  * 6060072
  * Minor Programmeren - Data Processing
+ * 
+ * Plot of election results in the netherlands. 
  */
 
 'use strict';
